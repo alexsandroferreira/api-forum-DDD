@@ -20,5 +20,6 @@ describe('Create Answer', async () => {
     })
 
     expect(answer.id).toBeTruthy()
+    expect(inMemoryAnswersRepository.items[0].id).toEqual(answer.id)
   })
 })

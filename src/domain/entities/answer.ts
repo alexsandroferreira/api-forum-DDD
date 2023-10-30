@@ -1,60 +1,61 @@
-import { randomUUID } from "node:crypto"
-import { Entity } from "../../core/entities/entity"
-import { UniqueEntityID } from "../../core/entities/unique-entity-id"
-import { Optional } from "../../core/types/optional"
+import { Entity } from '@/core/entities/entity'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { Optional } from '@/core/types/optional'
 
 interface AnswerProps {
-    authorId: UniqueEntityID
-    questionId: UniqueEntityID
-    content: string
-    createdAt: Date
-    updatedAt?: Date
+  authorId: UniqueEntityID
+  questionId: UniqueEntityID
+  content: string
+  createdAt: Date
+  updatedAt?: Date
+}
+
+export class Answer extends Entity<AnswerProps> {
+  static create(
+    props: Optional<AnswerProps, 'createdAt'>,
+    id?: UniqueEntityID,
+  ) {
+    const answer = new Answer(
+      {
+        ...props,
+        createdAt: new Date(),
+      },
+      id,
+    )
+
+    return answer
   }
 
-export class Answer  extends Entity<AnswerProps>{
+  get excerpt() {
+    return this.content.substring(0, 120).trimEnd().concat('...')
+  }
 
-    static create (
-        props: Optional<AnswerProps, 'createdAt'>,
-         id?: UniqueEntityID
-         ) {
-            const answer = new Answer({
-                ...props,
-                createdAt: new Date(),
-            }, id)
+  get authorId() {
+    return this.props.authorId
+  }
 
-            return answer
-    }
+  get questionId() {
+    return this.props.questionId
+  }
 
-    get excerpt() {
-        return this.content.substring(0, 120).trimEnd().concat('...')
-    }
+  set content(content: string) {
+    this.props.content = content
+    this.touch()
+  }
 
-    get authorId() {
-        return this.props.authorId
-    }
+  get content() {
+    return this.props.content
+  }
 
-    get questionId() {
-        return this.props.questionId
-    }
+  get createdAt() {
+    return this.props.createdAt
+  }
 
-    set content(content: string) {
-        this.props.content = content
-        this.touch()
-    }
+  get updatedAt() {
+    return this.props.updatedAt
+  }
 
-    get content() {
-        return this.props.content
-    }
-
-    get createdAt() {
-        return this.props.createdAt
-    }
-
-    get updatedAt() {
-        return this.props.updatedAt
-    }
-
-    private touch() {
-        this.props.updatedAt = new Date()
-    }
+  private touch() {
+    this.props.updatedAt = new Date()
+  }
 }
